@@ -11,7 +11,7 @@
 | 朱紫月   | 新闻网站                | Spring Boot + Vue.js，开发新闻分类、广告集成、跨站行为串联                         |
 
 ## 技术选型
-- 后端：Spring Boot 2.7.x + MyBatis Plus（JDK 1.8，部署于Tomcat 9.0）
+- 后端：Spring Boot 2.7.x + MyBatis Plus（JDK 17，部署于Tomcat 11.0.13）
 - 前端：Vue.js 2.x + Element UI
 - 数据库：MySQL 8.0 + Redis 6.0
 - 版本控制：Git + GitHub（单仓库多模块管理）
