@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop_sys.dao.ProductMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.shop_sys.entity.Product">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="product_type" property="productType" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="describe" property="describe" jdbcType="VARCHAR"/>
+        <result column="img_url" property="imgUrl" jdbcType="VARCHAR"/>
+        <result column="product_price" property="productPrice" jdbcType="DECIMAL"/>
+        <result column="product_count" property="productCount" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        id, product_type, product_name, `describe`, img_url, product_price, product_count, create_time
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Where_Clause">
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="productType != null and productType != ''">
+                AND product_type = #{productType}
+            </if>
+            <if test="productName != null and productName != ''">
+                AND product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询产品列表 -->
+    <select id="selectProductList" parameterType="com.shop_sys.param.ProductQueryParam" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM product
+        <include refid="Where_Clause"/>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 统计产品总数 -->
+    <select id="countProduct" parameterType="com.shop_sys.param.ProductQueryParam" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM product
+        <include refid="Where_Clause"/>
+    </select>
+
+    <!-- 根据ID查询产品详情 -->
+    <select id="selectProductById" parameterType="com.shop_sys.param.ProductQueryParam" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM product
+        <include refid="Where_Clause"/>
+        LIMIT 1
+    </select>
+
+</mapper>
+
