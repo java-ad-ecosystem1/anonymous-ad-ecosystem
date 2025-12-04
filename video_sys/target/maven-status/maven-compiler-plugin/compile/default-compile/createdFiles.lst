@@ -1,0 +1,13 @@
+com\video_sys\common\PageResult.class
+com\video_sys\param\VideoParam.class
+com\video_sys\model\VideoModel.class
+com\video_sys\service\VideoService.class
+com\video_sys\VideoSysApplication.class
+com\video_sys\dao\VideoMapper.class
+com\video_sys\config\WebMvcConfig.class
+com\video_sys\common\PageParam.class
+com\video_sys\service\impl\VideoServiceImpl.class
+com\video_sys\controller\VideoController.class
+com\video_sys\entity\Video.class
+com\video_sys\common\ResultCode.class
+com\video_sys\common\Result.class

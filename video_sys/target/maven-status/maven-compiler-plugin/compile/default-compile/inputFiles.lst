@@ -1,0 +1,13 @@
+C:\Space\video_sys\src\main\java\com\video_sys\VideoSysApplication.java
+C:\Space\video_sys\src\main\java\com\video_sys\common\PageResult.java
+C:\Space\video_sys\src\main\java\com\video_sys\param\VideoParam.java
+C:\Space\video_sys\src\main\java\com\video_sys\entity\Video.java
+C:\Space\video_sys\src\main\java\com\video_sys\common\PageParam.java
+C:\Space\video_sys\src\main\java\com\video_sys\controller\VideoController.java
+C:\Space\video_sys\src\main\java\com\video_sys\service\VideoService.java
+C:\Space\video_sys\src\main\java\com\video_sys\service\impl\VideoServiceImpl.java
+C:\Space\video_sys\src\main\java\com\video_sys\dao\VideoMapper.java
+C:\Space\video_sys\src\main\java\com\video_sys\common\Result.java
+C:\Space\video_sys\src\main\java\com\video_sys\config\WebMvcConfig.java
+C:\Space\video_sys\src\main\java\com\video_sys\model\VideoModel.java
+C:\Space\video_sys\src\main\java\com\video_sys\common\ResultCode.java
