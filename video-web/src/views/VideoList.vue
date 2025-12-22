@@ -1,6 +1,36 @@
 <template>
   <div class="video-list">
-    <div class="filters">
+    <!-- 添加搜索区域 -->
+    <div class="search-section">
+      <div class="search-container">
+        <input 
+          v-model="searchKeyword"
+          type="text" 
+          placeholder="输入视频名称搜索..."
+          class="search-input"
+          @keyup.enter="handleSearch"
+          @input="handleSearchInput"
+        />
+        <button class="search-btn" @click="handleSearch">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M14 14L10.3333 10.3333M11.7778 6.88889C11.7778 9.65411 9.65411 11.7778 6.88889 11.7778C4.12367 11.7778 2 9.65411 2 6.88889C2 4.12367 4.12367 2 6.88889 2C9.65411 2 11.7778 4.12367 11.7778 6.88889Z" 
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          搜索
+        </button>
+        <button 
+          v-if="searchKeyword" 
+          class="clear-btn" 
+          @click="clearSearch"
+        >
+          清除
+        </button>
+      </div>
+      
+      <!-- 搜索提示 -->
+      <div v-if="searchKeyword && videos.length > 0" class="search-info">
+        找到 {{ videos.length }} 个相关视频
+      </div>
     </div>
 
     <!-- 加载状态 -->
@@ -27,7 +57,7 @@
           v-for="video in videos" 
           :key="video.id"
           class="video-card"
-          @click="goToDetail(video.id,video.videoType)"
+          @click="goToDetail(video.id, video.videoType)"
         >
           <div class="video-thumbnail">
             <video 
@@ -90,13 +120,17 @@
       </div>
     </div>
 
-    <!-- 空状态 -->
+    <!-- 空状态 - 区分搜索无结果和普通空状态 -->
     <div v-else class="empty-container">
       <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
         <circle cx="60" cy="60" r="50" fill="#f0f0f0" />
         <path d="M45 50L75 60L45 70V50Z" fill="#ccc" />
       </svg>
-      <p>暂无视频</p>
+      <p v-if="searchKeyword">没有找到"{{ searchKeyword }}"相关的视频</p>
+      <p v-else>暂无视频</p>
+      <button v-if="searchKeyword" class="clear-btn empty-btn" @click="clearSearch">
+        查看所有视频
+      </button>
     </div>
   </div>
 </template>
@@ -116,51 +150,12 @@ const videos = ref([])
 const loading = ref(false)
 const error = ref('')
 const total = ref(0)
+const searchKeyword = ref('') // 搜索关键词
+const searchDebounceTimer = ref(null) // 防抖计时器
 
 // 分页相关
 const pageSize = 12
 const currentPage = ref(1)
-
-// 总页数
-const totalPages = computed(() => {
-  if (total.value > 0) {
-    // 如果接口返回了总数，使用总数计算
-    return Math.ceil(total.value / pageSize)
-  }
-  // 否则使用列表长度计算
-  return Math.ceil(videos.value.length / pageSize)
-})
-
-// 可见页码
-const visiblePages = computed(() => {
-  const pages = []
-  const totalPageCount = totalPages.value
-  const current = currentPage.value
-  
-  if (totalPageCount <= 7) {
-    for (let i = 1; i <= totalPageCount; i++) {
-      pages.push(i)
-    }
-  } else {
-    if (current <= 4) {
-      for (let i = 1; i <= 5; i++) pages.push(i)
-      pages.push('...')
-      pages.push(totalPageCount)
-    } else if (current >= totalPageCount - 3) {
-      pages.push(1)
-      pages.push('...')
-      for (let i = totalPageCount - 4; i <= totalPageCount; i++) pages.push(i)
-    } else {
-      pages.push(1)
-      pages.push('...')
-      for (let i = current - 1; i <= current + 1; i++) pages.push(i)
-      pages.push('...')
-      pages.push(totalPageCount)
-    }
-  }
-  
-  return pages
-})
 
 // 获取视频列表
 const fetchVideoList = async () => {
@@ -172,9 +167,16 @@ const fetchVideoList = async () => {
       pageNum: currentPage.value,
       pageSize: pageSize
     }
+    
+    // 如果有搜索关键词，添加到参数中
+    // 注意：后端参数是 videoName，对应数据库字段 video_name
+    if (searchKeyword.value.trim()) {
+      params.videoName = searchKeyword.value.trim()
+    }
+    
     const res = await videoApi.list(params)
     if(!res || !res.data || res.code !== 200) {
-      error.value = res.message || '获取新闻列表失败，请稍后重试'
+      error.value = res.message || '获取视频列表失败，请稍后重试'
       videos.value = []
       total.value = 0
       return
@@ -191,6 +193,45 @@ const fetchVideoList = async () => {
   }
 }
 
+// 处理搜索输入（防抖）
+const handleSearchInput = () => {
+  clearTimeout(searchDebounceTimer.value)
+  searchDebounceTimer.value = setTimeout(() => {
+    handleSearch()
+  }, 300) // 300毫秒防抖
+}
+
+// 处理搜索
+const handleSearch = () => {
+  currentPage.value = 1 // 搜索时回到第一页
+  fetchVideoList()
+  
+  // 更新URL查询参数
+  const query = { ...route.query }
+  if (searchKeyword.value.trim()) {
+    query.search = searchKeyword.value.trim()
+  } else {
+    delete query.search
+  }
+  query.page = 1
+  
+  router.push({ query })
+}
+
+// 清除搜索
+const clearSearch = () => {
+  searchKeyword.value = ''
+  currentPage.value = 1
+  fetchVideoList()
+  
+  // 清除URL中的搜索参数
+  const query = { ...route.query }
+  delete query.search
+  query.page = 1
+  router.push({ query })
+}
+
+// 获取视频URL
 const getVideoUrl = (videoUrl) => {
   if (!videoUrl) return ''
   if (videoUrl.startsWith('http://') || videoUrl.startsWith('https://')) {
@@ -207,12 +248,10 @@ const getVideoUrl = (videoUrl) => {
 const handleVideoHover = (event, isHover) => {
   const videoElement = event.target
   if (isHover) {
-    // 鼠标悬停时播放视频
     videoElement.play().catch(() => {
       // 如果自动播放失败，忽略错误
     })
   } else {
-    // 鼠标离开时暂停并重置视频
     videoElement.pause()
     videoElement.currentTime = 0
   }
@@ -222,33 +261,55 @@ const handleVideoHover = (event, isHover) => {
 const changePage = (page) => {
   if (page === '...' || page < 1 || page > totalPages.value) return
   currentPage.value = page
-  router.push({ query: { ...route.query, page } })
+  
+  // 更新URL查询参数
+  const query = { ...route.query }
+  query.page = page
+  if (searchKeyword.value.trim()) {
+    query.search = searchKeyword.value.trim()
+  }
+  router.push({ query })
+  
   window.scrollTo({ top: 0, behavior: 'smooth' })
-  // 页码变化会触发 watch，自动调用 fetchVideoList
 }
 
-const goToDetail = (id,videoType) => {
-if (videoType) {
+const goToDetail = (id, videoType) => {
+  if (videoType) {
     saveVideoType(videoType)
     currentVideoType.value = videoType
   }
   router.push(`/video/${id}`)
 }
 
-// 从路由查询参数获取页码
+// 从路由查询参数获取页码和搜索词
 onMounted(() => {
   const page = parseInt(route.query.page) || 1
+  const search = route.query.search || ''
+  
   currentPage.value = page
+  searchKeyword.value = search
+  
   fetchVideoList()
 })
 
 // 监听页码变化，重新获取数据
 watch(currentPage, (newPage, oldPage) => {
-  // 避免初始化时重复请求
   if (oldPage !== undefined && newPage !== oldPage) {
     fetchVideoList()
   }
 })
+
+// 监听路由变化，处理返回按钮等情况
+watch(() => route.query, (newQuery) => {
+  if (newQuery.search !== undefined && newQuery.search !== searchKeyword.value) {
+    searchKeyword.value = newQuery.search || ''
+  }
+  
+  const page = parseInt(newQuery.page) || 1
+  if (page !== currentPage.value) {
+    currentPage.value = page
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>
@@ -256,12 +317,90 @@ watch(currentPage, (newPage, oldPage) => {
   width: 100%;
 }
 
-.filters {
+/* 搜索区域样式 */
+.search-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.search-container {
   display: flex;
   gap: 12px;
-  margin-bottom: 30px;
-  overflow-x: auto;
-  padding-bottom: 10px;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.clear-btn {
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  color: #ff6b6b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.clear-btn:hover {
+  background: #fff5f5;
+  border-color: #ff6b6b;
+  transform: translateY(-2px);
+}
+
+.search-info {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+/* 空状态按钮 */
+.empty-btn {
+  margin-top: 20px;
+  padding: 10px 24px;
 }
 
 /* 加载状态 */
@@ -334,40 +473,7 @@ watch(currentPage, (newPage, oldPage) => {
   margin-top: 20px;
   font-size: 16px;
   color: #95a5a6;
-}
-
-.filters::-webkit-scrollbar {
-  height: 6px;
-}
-
-.filters::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 3px;
-}
-
-.filter-btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 25px;
-  background: white;
-  color: #5f6368;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.filter-btn:hover {
-  background: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.filter-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  text-align: center;
 }
 
 .videos-grid {
@@ -441,17 +547,6 @@ watch(currentPage, (newPage, oldPage) => {
   padding: 16px;
   display: flex;
   gap: 12px;
-}
-
-.video-avatar {
-  flex-shrink: 0;
-}
-
-.video-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 
 .video-details {
@@ -559,8 +654,23 @@ watch(currentPage, (newPage, oldPage) => {
   opacity: 0.6;
 }
 
-/* 响应式分页 */
+/* 响应式设计 */
 @media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+  }
+  
+  .search-input,
+  .search-btn,
+  .clear-btn {
+    width: 100%;
+  }
+  
+  .videos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
   .pagination {
     flex-wrap: wrap;
     gap: 8px;
@@ -577,10 +687,5 @@ watch(currentPage, (newPage, oldPage) => {
     height: 36px;
     font-size: 13px;
   }
-  
-  .page-numbers {
-    gap: 6px;
-  }
 }
 </style>
-
