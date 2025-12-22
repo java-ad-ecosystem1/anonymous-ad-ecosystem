@@ -574,17 +574,22 @@ const replyToComment = (comment) => {
   document.querySelector('.comment-input textarea')?.focus()
 }
 
-// 获取视频URL
+// 获取视频URL（带简单清洗，容错数据库中可能带有时长或空格）
 const getVideoUrl = (videoUrl) => {
   if (!videoUrl) return ''
   if (videoUrl.startsWith('http://') || videoUrl.startsWith('https://')) {
     return videoUrl
   }
+
+  // 简单清洗：去除末尾可能被拼接的时长文本（如 "_h4: 24"、".r15: 41" 等），并移除多余空白
+  let cleaned = videoUrl.trim()
+  cleaned = cleaned.replace(/[_.\s-]*[hr]?\s?\d+:\s*\d{2}$/, '')
+  cleaned = cleaned.replace(/\s+/g, '')
+
   // 添加后端访问路径前缀
   const baseUrl = 'http://localhost:8084'
-  // 确保路径以 / 开头
-  const path = videoUrl.startsWith('/') ? videoUrl : `/${videoUrl}`
-  return `${baseUrl}${path}`
+  const path = cleaned.startsWith('/') ? cleaned : `/${cleaned}`
+  return `${baseUrl}${encodeURI(path)}`
 }
 
 // 获取广告媒体URL (图片或视频)
