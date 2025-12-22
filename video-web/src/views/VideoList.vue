@@ -154,8 +154,45 @@ const searchKeyword = ref('') // 搜索关键词
 const searchDebounceTimer = ref(null) // 防抖计时器
 
 // 分页相关
+// 每页显示 12 条（恢复为默认分页行为）
 const pageSize = 12
 const currentPage = ref(1)
+
+// 计算总页数
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil((total.value || 0) / pageSize))
+})
+
+// 可见页码，用于显示省略号逻辑
+const visiblePages = computed(() => {
+  const tp = totalPages.value
+  const cp = currentPage.value
+  const pages = []
+
+  if (tp <= 7) {
+    for (let i = 1; i <= tp; i++) pages.push(i)
+    return pages
+  }
+
+  // 总页数较多时，固定展示两端和当前附近页，使用 '...' 作为省略符
+  pages.push(1)
+  pages.push(2)
+
+  if (cp > 4) pages.push('...')
+
+  const start = Math.max(3, cp - 1)
+  const end = Math.min(tp - 2, cp + 1)
+  for (let p = start; p <= end; p++) {
+    if (!pages.includes(p)) pages.push(p)
+  }
+
+  if (cp < tp - 3) pages.push('...')
+
+  pages.push(tp - 1)
+  pages.push(tp)
+
+  return pages
+})
 
 // 获取视频列表
 const fetchVideoList = async () => {
@@ -231,17 +268,23 @@ const clearSearch = () => {
   router.push({ query })
 }
 
-// 获取视频URL
+// 获取视频URL（带简单清洗，容错数据库中可能带有时长或空格）
 const getVideoUrl = (videoUrl) => {
   if (!videoUrl) return ''
   if (videoUrl.startsWith('http://') || videoUrl.startsWith('https://')) {
     return videoUrl
   }
+
+  // 简单清洗：去除末尾可能被拼接的时长文本（如 "_h4: 24"、".r15: 41" 等），并移除多余空白
+  let cleaned = videoUrl.trim()
+  cleaned = cleaned.replace(/[_.\s-]*[hr]?\s?\d+:\s*\d{2}$/, '')
+  cleaned = cleaned.replace(/\s+/g, '')
+
   // 添加后端访问路径前缀
   const baseUrl = 'http://localhost:8084'
-  // 确保路径以 / 开头
-  const path = videoUrl.startsWith('/') ? videoUrl : `/${videoUrl}`
-  return `${baseUrl}${path}`
+  const path = cleaned.startsWith('/') ? cleaned : `/${cleaned}`
+  // 对路径进行 encode 以处理空格或特殊字符
+  return `${baseUrl}${encodeURI(path)}`
 }
 
 // 处理视频悬停效果
