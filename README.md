@@ -575,3 +575,382 @@ java -jar target/video-sys-*.jar
 - 🔧 完善的工程化配置和代码结构
 - 📱 全平台响应式支持
 - 📊 清晰的数据流和状态管理
+
+
+# 📰 新闻管理系统 (News Management System)
+
+## 📋 项目概述
+
+新闻管理系统是一个基于Spring Boot + Vue.js的全栈Web应用，主要用于新闻内容的发布、管理和展示。系统采用前后端分离架构，后端提供RESTful API服务，前端使用Vue 3构建现代化的单页面应用。项目实现了新闻的分页查询、详情查看、多媒体广告展示等核心功能，支持多种新闻类型（手机、摄影、服装、电脑等）的分类管理。
+
+## ✨ 核心功能
+
+### 🗞️ 新闻管理功能
+- **新闻列表分页查询**：支持按新闻类型、标题、标签、来源等多种条件筛选，实现高效的数据展示
+- **新闻详情查看**：展示新闻完整内容，支持HTML富文本渲染，包括图片、排版等多媒体内容
+- **图片上传与展示**：支持新闻封面图的上传和动态访问，图片存储在服务器指定目录
+- **智能标签分类**：支持多标签分类系统，如"手机|新闻"、"图片|新闻"等，便于内容组织
+
+### 📺 广告管理功能
+- **智能广告投放**：根据新闻类型动态显示相关广告内容，提高广告转化率
+- **多媒体广告支持**：支持图片、视频、文本三种广告类型的展示和播放控制
+- **实时广告查询**：实时获取最新的相关广告内容，确保广告信息的时效性
+
+### 🎯 用户体验特性
+- **响应式设计**：全面适配桌面电脑、平板设备和移动手机，提供一致的用户体验
+- **现代化交互界面**：采用Vue 3 Composition API构建，界面美观、交互流畅
+- **平滑页面导航**：支持路由跳转和浏览状态保持，提升用户浏览体验
+- **搜索功能**：提供新闻标题的搜索功能（前端实现），方便用户快速查找内容
+
+## 🏗️ 项目架构设计
+
+### 总体架构概述
+本项目采用前后端分离的架构模式。后端使用Spring Boot框架构建RESTful API服务，前端使用Vue 3框架构建现代化的单页面应用。两者通过HTTP/JSON协议进行通信，实现了关注点的完全分离。这种架构设计使得前后端可以独立开发、测试和部署，提高了开发效率和系统的可维护性。
+
+### 后端架构设计
+后端采用经典的三层架构设计模式。表现层（Controller层）负责接收HTTP请求、解析参数并返回JSON响应；业务逻辑层（Service层）包含所有的业务规则和逻辑处理；数据访问层（DAO层）负责与数据库进行交互，使用MyBatis作为ORM框架。数据模型层贯穿整个架构，包括实体类、数据传输对象和查询参数对象。
+
+### 前端架构设计
+前端基于Vue 3的Composition API构建，采用组件化开发模式。组件层将用户界面拆分为独立、可复用的组件；页面视图层组织各个组件形成完整页面；API服务层封装所有与后端通信的逻辑；工具层提供各种辅助函数。这种分层设计提高了代码的复用性和可维护性。
+
+## 🛠️ 技术栈选型
+
+### 后端技术栈
+- **核心框架**：Spring Boot 2.6.13 - 提供快速开发的企业级框架
+- **数据库**：MySQL 8.0.33 - 关系型数据库管理系统
+- **ORM框架**：MyBatis 2.2.2 + MyBatis-Spring-Boot-Starter - 轻量级持久层框架
+- **连接池**：Druid 1.2.16 - 阿里巴巴开源的高性能数据库连接池
+- **开发语言**：Java 1.8 - 稳定成熟的企业级编程语言
+- **构建工具**：Maven 3.8.1 - 项目构建和依赖管理
+
+### 前端技术栈
+- **核心框架**：Vue 3.5.24 + Composition API - 渐进式JavaScript框架
+- **构建工具**：Vite 7.2.4 - 下一代前端构建工具
+- **路由管理**：Vue Router 4.6.3 - Vue.js官方路由管理器
+- **HTTP客户端**：Axios 1.13.2 - 基于Promise的HTTP客户端
+- **开发语言**：JavaScript (ES6+) - 现代Web开发语言
+
+### 开发环境
+- **开发工具**：IntelliJ IDEA（后端） + VS Code（前端）
+- **数据库工具**：MySQL Workbench / Navicat
+- **API测试工具**：Postman / Insomnia
+- **版本控制系统**：Git + GitHub
+- **操作系统**：Windows/Linux/macOS
+
+## 📊 数据库设计
+
+### 主要数据表结构
+
+#### `news` 新闻表（核心数据表）
+存储新闻文章的基本信息和内容，包括标题、描述、封面图、内容、来源等字段。支持按类型分类和多标签管理，使用UTF8MB4字符集确保多语言支持。
+
+#### `advertisement` 广告表（根据API推断）
+存储广告信息，支持图片、视频、文本三种广告类型。包含投放类型字段（关联新闻类型）、播放控制字段（静音、循环、自动播放）等，实现智能广告投放。
+
+### 数据关系设计
+新闻表和广告表通过`news_type`和`put_type`字段建立关联关系，实现基于新闻类型的智能广告匹配。这种设计使得系统能够根据用户当前浏览的新闻类型，动态显示相关的广告内容。
+
+## 🚀 快速开始指南
+
+### 环境要求
+- **Java环境**：JDK 1.8 或更高版本
+- **Node.js环境**：Node.js 16.x 或更高版本
+- **数据库**：MySQL 8.0 或更高版本
+- **构建工具**：Maven 3.8+ 和 npm 8+
+
+### 后端部署步骤
+
+1. **项目克隆与准备**
+   ```bash
+   git clone <repository-url>
+   cd news_sys
+   ```
+
+2. **数据库初始化**
+   ```sql
+   -- 创建数据库
+   CREATE DATABASE news_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   
+   -- 导入数据表结构
+   USE news_db;
+   SOURCE news.sql;
+   ```
+
+3. **配置文件修改**
+   编辑 `src/main/resources/application.properties` 文件，更新数据库连接信息和文件上传路径：
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/news_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   file.upload.path=/path/to/your/uploads/folder
+   ```
+
+4. **项目构建与运行**
+   ```bash
+   # 使用Maven构建项目
+   mvn clean package
+   
+   # 运行项目
+   java -jar target/news_sys-0.0.1-SNAPSHOT.jar
+   
+   # 或者使用开发模式运行
+   mvn spring-boot:run
+   ```
+
+### 前端部署步骤
+
+1. **进入前端目录**
+   ```bash
+   cd news-web
+   ```
+
+2. **安装项目依赖**
+   ```bash
+   npm install
+   ```
+
+3. **环境变量配置**
+   创建 `.env` 文件并配置后端API地址：
+   ```env
+   VITE_API_BASE_URL=http://localhost:8082
+   ```
+
+4. **启动开发服务器**
+   ```bash
+   npm run dev
+   ```
+
+5. **构建生产版本**
+   ```bash
+   npm run build
+   # 生成的静态文件位于 dist/ 目录
+   ```
+
+6. **访问应用**
+   - 开发环境：http://localhost:5173
+   - 生产环境：部署到Web服务器（如Nginx）
+
+## 🔧 开发指南
+
+### 项目结构说明
+
+#### 后端项目结构
+```
+news_sys/                              # 后端Spring Boot项目根目录
+├── src/main/java/com/news_sys/        # Java源代码目录
+│   ├── common/                        # 公共组件包
+│   │   ├── PageParam.java            # 分页参数基类
+│   │   ├── PageResult.java           # 分页结果封装类
+│   │   ├── Result.java               # 统一响应封装类
+│   │   └── ResultCode.java           # 响应状态码枚举
+│   ├── config/                       # 配置类包
+│   │   └── WebMvcConfig.java         # Web MVC配置类
+│   ├── controller/                   # 控制器层
+│   │   └── NewsController.java       # 新闻控制器
+│   ├── dao/                         # 数据访问层
+│   │   └── NewsMapper.java          # MyBatis映射接口
+│   ├── entity/                      # 实体类包
+│   │   └── News.java                # 新闻实体类
+│   ├── model/                       # 模型类包
+│   │   └── NewsModel.java           # 新闻数据传输模型
+│   ├── param/                       # 参数类包
+│   │   └── NewsQueryParam.java      # 新闻查询参数类
+│   └── service/                     # 业务逻辑层
+│       ├── NewsService.java         # 新闻服务接口
+│       └── impl/                    # 服务实现目录
+│           └── NewsServiceImpl.java # 新闻服务实现类
+└── src/main/resources/              # 资源文件目录
+    ├── mapper/                      # MyBatis映射文件目录
+    │   └── NewsMapper.xml           # 新闻数据映射文件
+    ├── application.properties       # 应用配置文件
+    └── news.sql                    # 数据库初始化脚本
+```
+
+#### 前端项目结构
+```
+news-web/                            # 前端Vue项目根目录
+├── src/                            # 源代码目录
+│   ├── components/                 # 可复用组件目录
+│   │   ├── Header.vue             # 页面头部组件
+│   │   └── AdSidebar.vue          # 广告侧边栏组件
+│   ├── views/                     # 页面视图目录
+│   │   ├── NewsList.vue           # 新闻列表页面
+│   │   └── NewsDetail.vue         # 新闻详情页面
+│   ├── api/                       # API接口目录
+│   │   ├── api.js                # API接口封装
+│   │   └── http.js               # HTTP客户端配置
+│   ├── utils/                     # 工具函数目录
+│   │   ├── date.js               # 日期格式化工具
+│   │   ├── http.js               # HTTP请求封装
+│   │   └── storage.js            # 本地存储管理
+│   ├── router/                   # 路由配置目录
+│   │   └── index.js             # 路由配置文件
+│   ├── assets/                   # 静态资源目录
+│   ├── App.vue                   # 根组件
+│   └── main.js                   # 应用入口文件
+├── package.json                  # 项目配置和依赖管理
+├── vite.config.js               # Vite构建配置
+└── index.html                   # 应用入口HTML文件
+```
+
+### API接口文档
+
+#### 新闻相关接口
+
+**1. 获取新闻列表接口**
+- **请求方式**：GET
+- **接口地址**：`/api/news/list`
+- **请求参数**：
+  ```json
+  {
+    "pageNum": 1,        // 当前页码，从1开始
+    "pageSize": 10,      // 每页显示数量
+    "newsType": "mobile", // 新闻类型（可选）
+    "title": "关键词",    // 标题关键词（可选，模糊查询）
+    "label": "手机",      // 标签（可选）
+    "source": "CNMO"     // 新闻来源（可选）
+  }
+  ```
+- **响应格式**：
+  ```json
+  {
+    "code": 200,
+    "message": "操作成功",
+    "data": {
+      "list": [
+        {
+          "id": 1,
+          "newsType": "mobile",
+          "title": "新闻标题",
+          "describe": "新闻描述",
+          "imgUrl": "/uploads/images/xxx.png",
+          "label": "手机|新闻",
+          "content": "新闻内容...",
+          "source": "CNMO",
+          "createTime": "2025-11-21T09:40:51"
+        }
+      ],
+      "total": 100,
+      "pageNum": 1,
+      "pageSize": 10,
+      "totalPages": 10
+    }
+  }
+  ```
+
+**2. 获取新闻详情接口**
+- **请求方式**：GET
+- **接口地址**：`/api/news/detail`
+- **请求参数**：`id`（新闻ID，必需）
+- **响应格式**：返回单个新闻对象的完整信息
+
+#### 广告相关接口
+
+**1. 查询最新广告接口**
+- **请求方式**：GET
+- **接口地址**：`/api/advertisement/queryLastAds`
+- **请求参数**：`putType`（投放类型，对应新闻类型）
+- **响应格式**：返回最新的相关广告信息
+
+### 开发规范
+
+#### 命名规范
+- **Java类命名**：采用大驼峰命名法，如`NewsController`、`NewsServiceImpl`
+- **变量和方法命名**：采用小驼峰命名法，如`getNewsList`、`newsItem`
+- **数据库表名和字段名**：采用小写字母加下划线，如`news_table`、`create_time`
+- **Vue组件命名**：采用大驼峰命名法，如`NewsList.vue`、`AdSidebar.vue`
+- **CSS类名命名**：采用短横线连接，如`news-item`、`detail-header`
+
+#### 代码规范
+- **后端代码**：遵循阿里巴巴Java开发手册规范
+- **前端代码**：使用ESLint进行代码规范检查
+- **API设计**：遵循RESTful设计原则，使用合适的HTTP方法
+- **错误处理**：统一使用`Result`类封装响应，包含状态码和消息
+- **异步处理**：前端统一使用async/await处理异步操作
+- **注释规范**：重要的类、方法、复杂逻辑需要添加注释说明
+
+#### 提交规范
+- **提交信息格式**：`<type>(<scope>): <subject>`
+- **类型说明**：
+  - feat: 新功能
+  - fix: 修复bug
+  - docs: 文档更新
+  - style: 代码格式调整
+  - refactor: 代码重构
+  - test: 测试相关
+  - chore: 构建过程或辅助工具变动
+
+## 📈 开发进度与计划
+
+### 已完成功能模块
+- ✅ 后端基础架构搭建和配置
+- ✅ 数据库设计和表结构实现
+- ✅ 新闻管理核心功能开发
+- ✅ 统一响应封装和异常处理
+- ✅ 分页查询功能支持
+- ✅ 前端Vue3项目初始化和配置
+- ✅ 路由系统设计和实现
+- ✅ 新闻列表页面开发
+- ✅ 新闻详情页面开发
+- ✅ 广告组件开发
+- ✅ 响应式布局适配
+
+### 当前开发状态
+项目已完成基础版本开发，具备新闻展示、分类浏览、详情查看、广告展示等核心功能。前后端已实现完整的数据交互，能够稳定运行。代码结构清晰，便于后续功能扩展和维护。
+
+### 后续开发计划
+- 🔄 **用户认证模块**：实现用户注册、登录、权限管理功能
+- 🔄 **后台管理系统**：开发新闻发布、编辑、删除的管理后台
+- 🔄 **新闻发布功能**：实现新闻内容的在线编辑和发布
+- 🔄 **评论互动系统**：添加用户评论、回复、点赞功能
+- 🔄 **收藏与分享**：实现新闻收藏、社交媒体分享功能
+- 🔄 **搜索功能优化**：后端实现全文搜索，提升搜索准确性和性能
+- 🔄 **数据统计报表**：开发访问统计、用户行为分析报表
+- 🔄 **性能优化**：缓存策略优化、数据库查询优化、前端加载优化
+- 🔄 **移动端适配**：进一步优化移动端用户体验
+
+## 🧪 测试指南
+
+### 单元测试
+```bash
+# 运行后端单元测试
+mvn test
+
+# 运行特定测试类
+mvn test -Dtest=NewsServiceTest
+
+# 生成测试报告
+mvn surefire-report:report
+```
+
+### 集成测试
+```bash
+# 使用Postman进行API测试
+# 导入项目提供的Postman集合文件
+# 执行各个接口的测试用例
+```
+
+### 前端测试
+```bash
+# 运行前端单元测试（待配置）
+npm run test:unit
+
+# 运行端到端测试（待配置）
+npm run test:e2e
+```
+
+### API测试示例
+```bash
+# 测试新闻列表接口
+curl -X GET "http://localhost:8082/api/news/list?pageNum=1&pageSize=5"
+
+# 测试新闻详情接口
+curl -X GET "http://localhost:8082/api/news/detail?id=1"
+
+# 测试广告查询接口
+curl -X GET "http://localhost:8082/api/advertisement/queryLastAds?putType=mobile"
+```
+
+
+
+
