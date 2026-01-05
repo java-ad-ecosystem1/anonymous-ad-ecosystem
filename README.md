@@ -285,6 +285,212 @@ src/
    - 保存广告
 4. **投放广告**：在列表中对已创建的广告进行投放操作
 5. **登出**：点击顶部导航栏的登出按钮
+   
+# 🛒 购物网站系统（Shop System）
+
+## 🎯 项目简介
+本项目是一个基于 **Spring Boot + Vue 3** 的前后端分离电子商务系统，  
+实现了商品浏览、搜索筛选、商品详情、购物车管理等核心电商功能。  
+系统结构清晰、功能完整、界面现代化，适用于课程设计、期末大作业及中小型电商项目实践。
+
+---
+
+## ✨ 项目功能概览
+- 商品分页展示与分类筛选
+- 商品名称模糊搜索
+- 商品详情页展示
+- 购物车管理与价格统计
+- 图片上传与静态资源访问
+- 响应式布局，适配多端设备
+
+---
+
+## 🏗️ 技术架构
+
+### 后端技术栈
+| 技术 | 版本 | 说明 |
+|---|---|---|
+| Spring Boot | 2.x | 后端核心框架 |
+| MyBatis | 3.x | 持久层框架 |
+| MySQL | 8.0 | 关系型数据库 |
+| Maven | - | 项目依赖管理 |
+
+### 前端技术栈
+| 技术 | 版本 | 说明 |
+|---|---|---|
+| Vue | 3.5+ | 前端框架 |
+| Vite | 7.2+ | 构建工具 |
+| Vue Router | 4.x | 路由管理 |
+| Axios | 1.x | HTTP 请求 |
+| CSS3 | - | 页面样式 |
+
+---
+
+## 📁 项目结构
+
+### 后端结构（`com.shop_sys`）
+```text
+com.shop_sys/
+├── common/                # 公共工具类
+│   ├── PageParam.java
+│   ├── PageResult.java
+│   ├── Result.java
+│   └── ResultCode.java
+├── config/                # 配置类
+│   └── WebMvcConfig.java
+├── controller/            # 控制层
+│   └── ProductController.java
+├── service/               # 业务接口
+│   └── ProductService.java
+├── service/impl/          # 业务实现
+│   └── ProductServiceImpl.java
+├── dao/                   # 数据访问层
+│   └── ProductMapper.java
+├── entity/                # 实体类
+│   └── Product.java
+├── model/                 # 返回模型
+│   └── ProductModel.java
+├── param/                 # 参数封装
+│   └── ProductQueryParam.java
+└── ShopSysApplication.java
+````markdown
+## 📁 前端结构（src）
+```text
+src/
+├── api/                   # 接口封装
+│   └── product.js
+├── assets/                # 静态资源
+│   ├── images/
+│   └── styles/
+├── components/            # 公共组件
+│   ├── ProductCard.vue
+│   ├── Header.vue
+│   ├── Footer.vue
+│   └── Pagination.vue
+├── router/
+│   └── index.js
+├── utils/
+│   ├── request.js
+│   ├── validator.js
+│   └── helper.js
+├── views/
+│   ├── Home.vue
+│   ├── ProductList.vue
+│   ├── ProductDetail.vue
+│   └── Cart.vue
+├── store/
+│   └── index.js
+├── App.vue
+└── main.js
+````
+
+---
+
+## 🚀 核心功能模块
+
+### 1️⃣ 商品列表模块（ProductList.vue）
+
+* 商品分页展示（支持自定义页大小）
+* 商品分类筛选
+* 商品名称模糊搜索
+* 响应式布局设计
+* 商品卡片展示（图片 / 名称 / 价格）
+
+---
+
+### 2️⃣ 商品详情模块（ProductDetail.vue）
+
+* 商品完整信息展示
+* 多图片展示
+* 实时库存显示
+* 加入购物车功能
+
+---
+
+### 3️⃣ 购物车模块（Cart.vue）
+
+* 商品添加 / 删除 / 数量修改
+* 自动计算商品总价
+* 库存实时校验
+* 一键结算功能
+
+---
+
+### 4️⃣ 公共组件
+
+* **Header**：导航栏 + 搜索功能
+* **ProductCard**：商品卡片组件
+* **Pagination**：分页组件
+* **Footer**：页面底部信息展示
+
+---
+
+## 🔌 API 接口设计
+
+### 商品接口
+
+* `GET /api/product/list`
+* `GET /api/product/detail?id=1`
+
+### 统一响应格式
+
+```json
+{
+  "code": 200,
+  "message": "操作成功",
+  "data": {}
+}
+```
+
+---
+
+## 📊 数据库设计
+
+### 商品表（product）
+
+```sql
+CREATE TABLE `product` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `product_type` varchar(50) NOT NULL COMMENT '商品类型',
+  `product_name` varchar(100) DEFAULT NULL COMMENT '商品名称',
+  `describe` varchar(255) DEFAULT NULL COMMENT '商品描述',
+  `img_url` varchar(255) DEFAULT NULL COMMENT '图片路径',
+  `product_price` decimal(10,2) DEFAULT NULL COMMENT '商品价格',
+  `product_count` int DEFAULT NULL COMMENT '库存数量',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+---
+
+## ⚙️ 配置说明
+
+### 后端配置（application.properties）
+
+```properties
+server.port=8083
+spring.datasource.url=jdbc:mysql://localhost:3306/shop_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+```
+
+### 前端代理配置（vite.config.js）
+
+```js
+server: {
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8083',
+      changeOrigin: true,
+      rewrite: path => path.replace(/^\/api/, '')
+    }
+  }
+}
+```
+
+```
+```
 
 
 # 📹 视频分享网站
