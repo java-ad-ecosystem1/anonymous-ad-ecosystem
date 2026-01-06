@@ -498,289 +498,298 @@ server: {
 ## 🎯 项目概述
 
 一个功能完善的视频分享平台，采用前后端分离架构，支持视频浏览、搜索筛选、详情查看等功能，并集成广告投放模块。项目提供流畅的用户体验和现代化的界面设计。
+# 视频分享平台
 
-### ✨ 核心特性
-- ✅ **完整的视频管理** - 分页浏览、条件筛选、详情查看
-- ✅ **响应式设计** - 完美适配桌面端和移动端
-- ✅ **广告集成** - 智能广告投放与展示
-- ✅ **高性能架构** - Vue 3 + Vite + Spring Boot
-- ✅ **统一的API设计** - RESTful API + 统一响应格式
-- ✅ **文件管理** - 视频上传、存储与访问
+一个基于 Spring Boot + Vue.js 构建的视频分享网站，支持视频上传、播放、分类浏览和评论互动功能。
 
-## 🏗️ 技术架构
+## 🛠️ 技术栈
 
-### 后端技术栈
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Spring Boot | 2.x | 后端框架 |
-| MySQL | 8.0 | 数据库 |
-| MyBatis | 3.x | ORM框架 |
-| Maven | - | 依赖管理 |
+### 后端技术
+- **框架**: Spring Boot 2.x
+- **数据库**: MySQL 8.0+
+- **ORM**: MyBatis
+- **构建工具**: Maven
+- **服务器**: Tomcat (内嵌)
 
-### 前端技术栈
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Vue 3 | 3.5+ | 前端框架 |
-| Vite | 7.2+ | 构建工具 |
-| Vue Router | 4.6+ | 路由管理 |
-| Axios | 1.13+ | HTTP客户端 |
-| CSS3 | - | 样式设计 |
+### 前端技术
+- **框架**: Vue 3 + Composition API
+- **路由**: Vue Router 4
+- **HTTP客户端**: Axios
+- **构建工具**: Vite
+- **样式**: CSS3 + CSS变量
 
-## 📁 项目结构详解
+## 📁 项目结构
 
-### 前端项目结构 (`src/`)
+### 后端目录结构
 ```
-src/
-├── api/                          # API接口管理
-│   └── api.js                   # 统一的API请求封装
-├── assets/                      # 静态资源
-│   └── image.png               # 项目图片资源
-├── components/                  # 可复用组件
-│   ├── AdSidebar.vue           # 广告侧边栏组件
-│   └── Header.vue              # 顶部导航组件
-├── router/                      # 路由配置
-│   └── index.js                # 路由定义与配置
-├── utils/                       # 工具函数
-│   ├── date.js                 # 日期处理工具
-│   ├── http.js                 # HTTP请求工具
-│   └── storage.js              # 本地存储工具
-├── views/                       # 页面视图
-│   ├── VideoDetail.vue         # 视频详情页
-│   └── VideoList.vue           # 视频列表页
-├── App.vue                      # 根组件
-├── main.js                      # 应用入口文件
-└── style.css                    # 全局样式文件
-```
-
-### 后端项目结构 (`com.video_sys`)
-```
-com.video_sys/
-├── common/                      # 公共基础类
-│   ├── PageParam.java          # 分页参数基类
-│   ├── PageResult.java         # 分页结果封装
-│   ├── Result.java             # 统一响应格式
-│   └── ResultCode.java         # 状态码枚举
-├── config/                      # 配置类
-│   └── WebMvcConfig.java       # Web MVC配置
-├── controller/                  # 控制器层
-│   └── VideoController.java    # 视频相关API
-├── service/                     # 服务层接口
-│   └── VideoService.java       # 视频业务接口
-├── service/impl/                # 服务层实现
-│   └── VideoServiceImpl.java   # 视频业务实现
-├── dao/                         # 数据访问层
-│   └── VideoMapper.java        # 视频数据操作
-├── entity/                      # 实体类
-│   └── Video.java              # 视频实体
-├── model/                       # 数据模型
-│   └── VideoModel.java         # 视频返回模型
-├── param/                       # 参数类
-│   └── VideoParam.java         # 视频查询参数
-└── VideoSysApplication.java     # Spring Boot启动类
+video-sys-backend/
+├── src/main/java/com/video_sys/
+│   ├── common/                 # 公共组件
+│   │   ├── PageParam.java      # 分页参数
+│   │   ├── PageResult.java     # 分页结果
+│   │   ├── Result.java         # 统一响应
+│   │   └── ResultCode.java     # 状态码枚举
+│   ├── config/                 # 配置类
+│   │   └── WebMvcConfig.java   # MVC配置
+│   ├── controller/             # 控制器
+│   │   └── VideoController.java
+│   ├── entity/                 # 实体类
+│   │   └── Video.java
+│   ├── model/                  # 模型类
+│   │   └── VideoModel.java
+│   ├── param/                  # 参数类
+│   │   └── VideoParam.java
+│   ├── dao/                    # 数据访问层
+│   │   └── VideoMapper.java
+│   └── service/                # 业务层
+│       ├── VideoService.java
+│       └── impl/
+│           └── VideoServiceImpl.java
+├── src/main/resources/
+│   ├── mapper/                 # MyBatis映射文件
+│   │   └── VideoMapper.xml
+│   ├── sql/                    # SQL脚本
+│   │   └── video.sql
+│   └── application.properties  # 应用配置
+└── src/test/                   # 测试代码
 ```
 
-## 🚀 核心功能模块
-
-### 1. 视频列表模块 (`VideoList.vue`)
-- **分页展示** - 支持自定义每页显示数量
-- **智能筛选** - 按视频类型、名称、发布者筛选
-- **响应式布局** - 自适应不同屏幕尺寸
-- **懒加载** - 滚动加载更多内容
-
-### 2. 视频详情模块 (`VideoDetail.vue`)
-- **完整信息展示** - 标题、时长、描述、发布时间
-- **视频播放器** - 内嵌视频播放功能
-- **相关推荐** - 智能推荐相关视频
-- **交互功能** - 收藏、分享、评论
-
-### 3. 广告系统 (`AdSidebar.vue`)
-- **智能投放** - 根据内容匹配广告
-- **多种形式** - 支持图片、视频等广告类型
-- **统计分析** - 广告曝光与点击统计
-- **定时刷新** - 广告内容轮播展示
-
-### 4. 公共组件
-- **Header组件** - 统一的导航栏，支持搜索功能
-- **AdSidebar组件** - 灵活的广告展示区域
-- **API封装** - 统一的请求拦截与错误处理
-
-## 🔧 配置说明
-
-### 开发环境配置
-```javascript
-// vite.config.js
-export default defineConfig({
-  server: {
-    host: '0.0.0.0',     // 允许所有IP访问
-    port: 5176,          // 前端开发端口
-    proxy: {             // API代理配置
-      '/api/advertisement': {
-        target: 'http://10.100.164.8',  // 广告API服务
-        changeOrigin: true,
-      },
-      '/api': {
-        target: 'http://localhost:8084', // 后端API服务
-        changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, '')
-      }
-    }
-  }
-})
+### 前端目录结构
+```
+video-web/
+├── dist/                       # 构建输出目录
+├── node_modules/              # 依赖包
+├── public/                    # 公共资源
+├── src/
+│   ├── api/                   # API接口
+│   │   └── api.js
+│   ├── assets/                # 静态资源
+│   │   └── image.png
+│   ├── components/            # 组件
+│   │   ├── AdSidebar.vue      # 广告侧边栏
+│   │   └── Header.vue         # 页面头部
+│   ├── router/               # 路由配置
+│   │   └── index.js
+│   ├── utils/                # 工具函数
+│   │   ├── date.js           # 日期格式化
+│   │   ├── http.js           # HTTP客户端
+│   │   └── storage.js        # 本地存储
+│   ├── views/                # 页面组件
+│   │   ├── VideoDetail.vue   # 视频详情页
+│   │   └── VideoList.vue     # 视频列表页
+│   ├── App.vue               # 根组件
+│   ├── main.js               # 入口文件
+│   └── style.css             # 全局样式
+├── .gitignore
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+└── vite.config.js            # Vite配置
 ```
 
-### 应用配置文件
+## ✨ 功能特性
+
+### 🎥 视频管理
+- ✅ 视频上传和存储
+- ✅ 视频信息管理（标题、描述、分类等）
+- ✅ 视频播放支持
+- ✅ 视频时长显示
+
+### 🔍 视频浏览
+- ✅ 分页视频列表（每页12条）
+- ✅ 视频搜索功能（按名称搜索）
+- ✅ 视频分类筛选
+- ✅ 响应式网格布局
+
+### 📺 视频播放
+- ✅ 支持 MP4 等常见视频格式
+- ✅ 视频封面预览（悬停播放）
+- ✅ 全屏播放支持
+- ✅ 播放进度控制
+- ✅ 视频播放广告系统
+
+### 💬 用户互动
+- ✅ 评论功能（基于本地存储）
+- ✅ 评论点赞
+- ✅ 访客用户名自动生成
+- ✅ 回复评论功能
+
+### 📢 广告系统
+- ✅ 广告展示（图片、视频、文本三种类型）
+- ✅ 广告投放策略（按视频类型匹配）
+- ✅ 播放中断广告
+- ✅ 中插广告（视频播放到50%时）
+- ✅ 广告倒计时跳过功能
+
+### ⚙️ 其他功能
+- ✅ 智能分页组件（带省略号逻辑）
+- ✅ 本地存储管理（视频类型、评论）
+- ✅ 响应式设计（支持移动端）
+- ✅ 错误处理与加载状态
+- ✅ 防抖搜索功能
+
+## 🚀 快速开始
+
+### 📋 环境要求
+
+**后端**:
+- JDK 1.8+
+- MySQL 5.7+
+- Maven 3.6+
+
+**前端**:
+- Node.js 14+
+- npm 6+
+
+### 🗄️ 数据库设置
+
+1. 创建数据库：
+```sql
+CREATE DATABASE video_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. 导入表结构：
+```bash
+mysql -u root -p video_db < src/main/resources/sql/video.sql
+```
+
+### ⚙️ 后端启动
+
+1. 配置数据库连接（修改 `application.properties`）：
 ```properties
-# application.properties
-# 服务器配置
-server.port=8084
+spring.datasource.url=jdbc:mysql://localhost:3306/video_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=123456
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+```
+
+2. 编译并运行：
+```bash
+# 进入后端目录
+cd video-sys-backend
+
+# 使用 Maven 编译
+mvn clean package
+
+# 运行 Spring Boot 应用
+java -jar target/video-sys-0.0.1-SNAPSHOT.jar
+```
+
+后端默认运行在：`http://localhost:8084`
+
+### 🎨 前端启动
+
+1. 安装依赖：
+```bash
+# 进入前端目录
+cd video-web
+npm install
+```
+
+2. 启动开发服务器：
+```bash
+npm run dev
+```
+
+前端默认运行在：`http://localhost:5173`
+
+## 🌐 API 接口
+
+### 视频相关接口
+
+| 方法 | 路径 | 描述 | 参数 |
+|------|------|------|------|
+| GET | `/api/video/list` | 获取分页视频列表 | `pageNum`（页码）, `pageSize`（每页大小）, `videoName`（搜索关键词，可选） |
+| GET | `/api/video/detail` | 获取视频详情 | `id`（视频ID） |
+
+### 📝 请求示例
+
+```http
+# 获取第一页视频列表，每页12条
+GET http://localhost:8084/api/video/list?pageNum=1&pageSize=12
+
+# 搜索视频
+GET http://localhost:8084/api/video/list?pageNum=1&pageSize=12&videoName=测试视频
+
+# 获取视频详情
+GET http://localhost:8084/api/video/detail?id=1
+```
+
+### 📊 响应格式
+
+```json
+{
+  "code": 200,
+  "message": "操作成功",
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "videoType": "movie",
+        "videoName": "测试视频",
+        "videoPublisher": "管理员",
+        "videoUrl": "/uploads/videos/test.mp4",
+        "duration": "05:24",
+        "videoDescribe": "视频描述内容",
+        "createTime": "2024-01-01 10:00:00"
+      }
+    ],
+    "total": 1,
+    "pageNum": 1,
+    "pageSize": 12,
+    "totalPages": 1
+  }
+}
+```
+
+## 📢 广告系统
+
+### ⏰ 广告触发时机
+
+1. **播放开始广告**：用户点击播放按钮时触发
+2. **中插广告**：视频播放到50%进度时触发
+3. **暂停广告**：用户主动暂停视频时触发
+4. **结束广告**：视频播放结束时触发
+
+### 🎨 广告类型
+
+- **图片广告**：支持 JPEG、PNG 格式
+- **视频广告**：支持 MP4 格式，可配置自动播放、静音、循环
+- **文本广告**：纯文本内容展示
+
+### 🔧 广告配置
+
+广告根据视频类型（`videoType`）进行匹配投放，确保广告内容与视频类别相关。
+
+
+## ⚙️ 配置文件说明
+
+### 后端配置（application.properties）
+
+```properties
+# 应用配置
 spring.application.name=video-sys
+server.port=8084
 
 # 数据库配置
 spring.datasource.url=jdbc:mysql://localhost:3306/video_db
 spring.datasource.username=root
 spring.datasource.password=123456
 
+# MyBatis配置
+mybatis.mapper-locations=classpath:mapper/*.xml
+mybatis.type-aliases-package=com.video_sys.entity
+mybatis.configuration.map-underscore-to-camel-case=true
+
 # 文件上传配置
+spring.servlet.multipart.enabled=true
 spring.servlet.multipart.max-file-size=200MB
+spring.servlet.multipart.max-request-size=200MB
 file.upload.path=uploads
+file.upload.video-path=${file.upload.path}/videos
 video.access.base-url=http://localhost:8084/uploads/videos/
 ```
-
-## 📊 数据库设计
-
-### 核心表结构
-```sql
--- 视频表
-CREATE TABLE `video` (
-  `id` bigint PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
-  `video_type` varchar(50) NOT NULL COMMENT '视频类型',
-  `video_name` varchar(500) COMMENT '视频名称',
-  `video_publisher` varchar(50) COMMENT '视频发布者',
-  `video_url` varchar(255) COMMENT '视频路径',
-  `duration` varchar(10) COMMENT '视频时长',
-  `video_describe` varchar(255) COMMENT '视频描述',
-  `create_time` datetime COMMENT '创建时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
-
-## 🌈 设计系统
-
-### 色彩方案
-```css
-:root {
-  --primary-color: #667eea;      /* 主色调 - 蓝色 */
-  --primary-dark: #764ba2;       /* 深色主调 - 紫色 */
-  --secondary-color: #FF6B6B;    /* 辅助色 - 红色 */
-  --text-primary: #2c3e50;       /* 主要文字 */
-  --text-secondary: #5f6368;     /* 次要文字 */
-  --bg-primary: #f5f7fa;         /* 背景色 */
-  --bg-white: #ffffff;           /* 白色背景 */
-}
-```
-
-### 布局系统
-- **栅格系统** - 灵活的内容布局
-- **响应式断点** - 768px(平板)、1200px(桌面)
-- **间距系统** - 统一的边距和填充
-- **圆角系统** - 8px、12px、16px、25px四级圆角
-
-### 动画效果
-```css
-/* 渐入动画 */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 滑动动画 */
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* 缩放动画 */
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-```
-
-## 🔌 API接口设计
-
-### 视频相关接口
-```javascript
-// API路径前缀: /api/video
-
-// 1. 分页查询视频列表
-GET /list?pageNum=1&pageSize=10&videoType=电影&videoName=教程
-
-// 2. 获取视频详情
-GET /detail?id=1
-
-// 响应格式
-{
-  "code": 200,
-  "message": "操作成功",
-  "data": {
-    // 视频数据
-  }
-}
-```
-
-### 状态码定义
-| 状态码 | 含义 | 说明 |
-|--------|------|------|
-| 200 | SUCCESS | 操作成功 |
-| 400 | PARAM_ERROR | 参数错误 |
-| 401 | UNAUTHORIZED | 未授权 |
-| 404 | NOT_FOUND | 资源不存在 |
-| 500 | ERROR | 服务器错误 |
-
-## 🚀 启动与部署
-
-### 本地开发
-```bash
-# 1. 启动后端服务
-cd video-sys-backend
-mvn spring-boot:run
-
-# 2. 启动前端开发服务器
-cd video-web
-npm install
-npm run dev
-
-# 3. 访问应用
-# 前端: http://localhost:5176
-# 后端: http://localhost:8084
-```
-
-### 生产构建
-```bash
-# 1. 构建前端
-npm run build
-
-# 2. 打包后端
-mvn clean package -DskipTests
-
-# 3. 部署后端JAR包
-java -jar target/video-sys-*.jar
-```
-
-## 📱 移动端适配
-
-项目完全响应式设计，支持：
-- 📱 **手机端** - 单列布局，触摸友好
-- 📱 **平板端** - 双列布局，优化空间利用
-- 🖥️ **桌面端** - 多列布局，充分利用大屏空间
-
----
-
-**项目亮点**: 
-- 🚀 现代化技术栈，开发体验优秀
-- 🎨 精美的UI设计和流畅的动画
-- 🔧 完善的工程化配置和代码结构
-- 📱 全平台响应式支持
-- 📊 清晰的数据流和状态管理
 
 
 # 📰 新闻管理系统 (News Management System)
